@@ -1,0 +1,34 @@
+var mapEmpleados = function(){
+
+	if (this.dep != null){
+	var output = {dep:this.dep, cedula: this.ced, depto: null}
+	}
+	
+		emit(this.dep,output);
+	};
+
+var mapDepartamentos = function() {
+	var output = {dep: this.dep, cedula: null, depto: this.nombre}
+		emit(this.dep,output);
+	};
+
+var reduceF = function(key,values){
+	var outs = {dep: null, cedula: null, nombreDep: null}
+	values.forEach(function(v){
+				
+			if(outs.dep == null){
+				outs.dep = v.dep
+			}
+			if(outs.cedula == null){
+				outs.cedula = v.cedula			
+			}
+			if(outs.nombreDep == null){
+				outs.nombreDep = v.depto
+			}
+		
+	});
+	return outs;
+};
+
+result = db.empleado.mapReduce(mapEmpleados, reduceF,{out:{reduce:'emp_dept'}});
+result = db.departamento.mapReduce(mapDepartamentos, reduceF, {out:{reduce:'emp_dept'}});
