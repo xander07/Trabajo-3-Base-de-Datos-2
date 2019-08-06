@@ -1,3 +1,5 @@
+-- Punto 1.a
+
 var mapEmpleados = function(){
 
 	if (this.dep != null){
@@ -32,3 +34,17 @@ var reduceF = function(key,values){
 
 result = db.empleado.mapReduce(mapEmpleados, reduceF,{out:{reduce:'emp_dept'}});
 result = db.departamento.mapReduce(mapDepartamentos, reduceF, {out:{reduce:'emp_dept'}});
+
+
+-- Punto 1.b
+db.empleado.aggregate([
+    {
+        $lookup:
+        {
+            from: "departamento",
+            localField: "dep",
+            foreignField: "dep",
+            as: "depto_empleado"
+        }
+    }
+])  
