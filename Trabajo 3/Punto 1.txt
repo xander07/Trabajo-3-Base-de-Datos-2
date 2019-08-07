@@ -3,37 +3,40 @@
 var mapEmpleados = function(){
 
 	if (this.dep != null){
-	var output = {dep:this.dep, cedula: this.ced, depto: null}
+	var output = {dep:this.dep, cedula:this.ced, nombreDep:null}
 	}
 	
 		emit(this.dep,output);
 	};
 
 var mapDepartamentos = function() {
-	var output = {dep: this.dep, cedula: null, depto: this.nombre}
+	var output = {dep: this.dep,  nombreDep: this.nombre}
 		emit(this.dep,output);
 	};
 
-var reduceF = function(key,values){
-	var outs = {dep: null, cedula: null, nombreDep: null}
+var reduceE = function(key,values){
+	var outs = {dep: null, cedula: [], nombreDep: null}
 	values.forEach(function(v){
 				
-			if(outs.dep == null){
-				outs.dep = v.dep
+			if(outs.dep==null){
+				outs.dep = key
+				if(v.cedula != undefined)
+				outs.cedula.push(v.cedula)
 			}
-			if(outs.cedula == null){
-				outs.cedula = v.cedula			
+			else if(outs.dep == key){
+				outs.cedula.push(v.cedula)
 			}
+			
 			if(outs.nombreDep == null){
-				outs.nombreDep = v.depto
+				outs.nombreDep = v.nombreDep
 			}
 		
 	});
 	return outs;
 };
 
-result = db.empleado.mapReduce(mapEmpleados, reduceF,{out:{reduce:'emp_dept'}});
-result = db.departamento.mapReduce(mapDepartamentos, reduceF, {out:{reduce:'emp_dept'}});
+result = db.empleado.mapReduce(mapEmpleados, reduceE,{out:'emp_dept'});
+result = db.departamento.mapReduce(mapDepartamentos, reduceE, {out:{reduce:'emp_dept'}});
 
 
 -- Punto 1.b
