@@ -1,6 +1,7 @@
 package Connections;
 
 
+import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import java.util.*;
@@ -23,14 +24,12 @@ public class ConnectMongo {
     db = client.getDatabase("trabajo3");
     totalesCliente = db.getCollection("totalescliente");
     totalesVendedor = db.getCollection("totalesvendedor");
-    this.mostrarTClientes();
   }
 
-  public final void mostrarTClientes() {
-    List<Document> datosClientes = new ArrayList<>();
-    totalesCliente.find().into(datosClientes);
-    datosClientes.forEach((obj) -> {
-      System.out.println(obj.toString());
-    });
+  public void saveCliente() {
+    Document document = new Document();
+    document.put("codigocliente", 1);
+    document.put("totalcomprado", 100000);
+    totalesCliente.insertOne(document);
   }
 }
