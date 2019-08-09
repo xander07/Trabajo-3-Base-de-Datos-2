@@ -1,12 +1,13 @@
 package Connections;
 
 
-import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import java.util.*;
 import org.bson.Document;
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
+import java.util.List;
 
 /**
  *
@@ -26,10 +27,25 @@ public class ConnectMongo {
     totalesVendedor = db.getCollection("totalesvendedor");
   }
 
-  public void saveCliente() {
-    Document document = new Document();
-    document.put("codigocliente", 1);
-    document.put("totalcomprado", 100000);
-    totalesCliente.insertOne(document);
+  public MongoCursor<Document> getTotalesCliente() {
+    return totalesCliente.find().iterator();
+  }
+
+  public MongoCursor<Document> getTotalesVendedor() {
+    return totalesVendedor.find().iterator();
+  }
+
+  public void saveCliente(int codigoCliente, int totalComprado) {
+    Document clientInfo = new Document();
+    clientInfo.put("codigocliente", codigoCliente);
+    clientInfo.put("totalcomprado", totalComprado);
+    totalesCliente.updateOne(Filters.eq("codigocliente", codigoCliente), new Document("$set", clientInfo), new UpdateOptions().upsert(true));
+  }
+  
+  public void saveVendedor(int codigoVendedor, int totalVendido) {
+    Document vendedorInfo = new Document();
+    vendedorInfo.put("codigovendedor", codigoVendedor);
+    vendedorInfo.put("totalvendido", totalVendido);
+    totalesVendedor.updateOne(Filters.eq("codigovendedor", codigoVendedor), new Document("$set", vendedorInfo), new UpdateOptions().upsert(true));
   }
 }

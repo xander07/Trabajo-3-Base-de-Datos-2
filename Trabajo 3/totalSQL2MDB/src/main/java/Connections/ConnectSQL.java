@@ -34,39 +34,48 @@ public class ConnectSQL {
     if (conn != null) {
       System.out.println("Connected to SQL!");
     }
-
-    try {
-      fetchVendedores();
-      fetchClientes();
-    } catch (SQLException ex) {
-      Logger.getLogger(ConnectSQL.class.getName()).log(Level.SEVERE, null, ex);
-    }
   }
 
   public ResultSet getVendedores() {
-    return vendedores;
+    try {
+      this.fetchVendedores();
+    } catch (SQLException ex) {
+      Logger.getLogger(ConnectSQL.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return this.vendedores;
   }
 
-  public ResultSet getClientes() {
-    return clientes;
+  public ResultSet getClientes() throws SQLException, SQLException {
+    try {
+      this.fetchClientes();
+    } catch (SQLException ex) {
+      Logger.getLogger(ConnectSQL.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return this.clientes;
   }
 
   private void fetchVendedores() throws SQLException {
     Statement stmt = this.conn.createStatement();
-    vendedores = stmt.executeQuery("SELECT codigovendedor, SUM(detalle.nrounidades * detalle.valorunitario) AS totalesvendedor FROM factura INNER JOIN detalle ON factura.codigofac = detalle.codigofac GROUP BY codigovendedor");
+    vendedores = stmt.executeQuery("SELECT codigovendedor, SUM(detalle.nrounidades * detalle.valorunitario) AS totalesvendedor "
+                                + "FROM factura "
+                                + "INNER JOIN detalle ON factura.codigofac = detalle.codigofac "
+                                + "GROUP BY codigovendedor");
   }
 
   private void fetchClientes() throws SQLException {
     Statement stmt = this.conn.createStatement();
-    clientes = stmt.executeQuery("SELECT codigocliente, SUM(detalle.nrounidades * detalle.valorunitario) AS totalesvendedor FROM factura INNER JOIN detalle ON factura.codigofac = detalle.codigofac GROUP BY codigocliente");
+    clientes = stmt.executeQuery("SELECT codigocliente, SUM(detalle.nrounidades * detalle.valorunitario) AS totalescliente "
+                              + "FROM factura "
+                              + "INNER JOIN detalle ON factura.codigofac = detalle.codigofac "
+                              + "GROUP BY codigocliente");
   }
 
   public void printClientes() {
     try {
+      this.fetchClientes();
       while(clientes.next()) {
         System.out.println(clientes.getInt(1)+" "+clientes.getInt(2));
       }
-      this.fetchClientes();
     } catch (SQLException ex) {
       Logger.getLogger(ConnectSQL.class.getName()).log(Level.SEVERE, null, ex);
     }
