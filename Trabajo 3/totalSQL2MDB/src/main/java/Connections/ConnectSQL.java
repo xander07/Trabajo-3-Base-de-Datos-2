@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class ConnectSQL {
 
-  final String url = "jdbc:oracle:thin:adminDB2/Un4B3ll3z4@moonzenith.2waky.com:1521:ORCLCDB";
+  final String url = "jdbc:oracle:thin:adminDB2/Un4B3ll3z4@moonzenith.2waky.com:1823:ORCLCDB";
   Connection conn;
   ResultSet vendedores;
   ResultSet clientes;
